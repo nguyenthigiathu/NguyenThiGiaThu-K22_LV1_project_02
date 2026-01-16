@@ -1,2 +1,4 @@
 aiohttp
 tqdm
+beautifulsoup4
+requests

@@ -1,46 +1,21 @@
-# src/utils/logger.py
-
 import logging
 import os
-from utils.constants import DEBUG
-
-LOG_DIR = "logs"
-LOG_FILE = "logs/crawler.log"
+from config.settings import LOG_DIR, DEBUG
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
-logger = logging.getLogger("tiki_crawler")
+logger = logging.getLogger("etl")
 logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
 
-formatter = logging.Formatter(
-    "%(asctime)s [%(levelname)s] %(message)s"
-)
+fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
 
-# File handler
-file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
-file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.INFO)
-
-# Console handler
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(formatter)
-console_handler.setLevel(logging.INFO)
-
-# Tránh add handler trùng khi reload
 if not logger.handlers:
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
+    fh = logging.FileHandler(f"{LOG_DIR}/etl.log", encoding="utf-8")
+    ch = logging.StreamHandler()
+    fh.setFormatter(fmt)
+    ch.setFormatter(fmt)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
 
-
-# ===== Helper functions =====
-
-def info(msg: str):
-    logger.info(msg)
-
-
-def warning(msg: str):
-    logger.warning(msg)
-
-
-def error(msg: str):
-    logger.error(msg)
+def info(m): logger.info(m)
+def error(m): logger.error(m)
